@@ -8,12 +8,18 @@ interface FeatureCardProps {
   icon: React.ReactNode;
   category: string;
   onGenerate: () => void;
+  ideal?: boolean;
 }
 
-export const FeatureCard = ({ title, description, icon, category, onGenerate }: FeatureCardProps) => {
+export const FeatureCard = ({ title, description, icon, category, onGenerate, ideal }: FeatureCardProps) => {
   return (
     <Card className="group relative overflow-hidden border-border bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_-10px_hsl(var(--primary)/0.3)]">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {ideal && (
+        <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-primary to-accent text-xs font-semibold text-primary-foreground shadow-lg">
+          ⭐ Ideal
+        </div>
+      )}
       
       <div className="relative p-6 space-y-4">
         <div className="flex items-start justify-between">
