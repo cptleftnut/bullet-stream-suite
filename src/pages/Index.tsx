@@ -1,13 +1,50 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CategoryCard } from "@/components/CategoryCard";
+import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
 import { categoryFeatures } from "@/data/categoryFeatures";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const categories = Object.entries(categoryFeatures).map(([id, data]) => ({
     id,
     ...data,
     featureCount: data.features.length
   }));
+
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
@@ -15,6 +52,17 @@ const Index = () => {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-accent/10" />
         <div className="container mx-auto px-4 py-16 relative">
+          <div className="flex justify-end mb-4">
+            {user ? (
+              <Button onClick={handleLogout} variant="outline">
+                Logout
+              </Button>
+            ) : (
+              <Button onClick={() => navigate("/auth")}>
+                Login
+              </Button>
+            )}
+          </div>
           <div className="text-center space-y-6 max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
               <Zap className="w-4 h-4 text-primary" />
@@ -27,8 +75,10 @@ const Index = () => {
             </h1>
             
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Generate production-ready Roblox game systems in seconds using AI. 
-              Choose your game genre and get complete, functional code for any feature.
+              {user 
+                ? "Generate production-ready Roblox game systems in seconds using AI. Choose your game genre and get complete, functional code for any feature."
+                : "Login to start generating production-ready Roblox game systems in seconds using AI."
+              }
             </p>
           </div>
         </div>

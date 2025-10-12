@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FeatureCard } from "@/components/FeatureCard";
 import { CodePreview } from "@/components/CodePreview";
@@ -10,10 +10,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 import { categoryFeatures } from "@/data/categoryFeatures";
+import { User, Session } from "@supabase/supabase-js";
 
 const CategoryPage = () => {
   const { category } = useParams();
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCode, setGeneratedCode] = useState("");
   const [selectedFeature, setSelectedFeature] = useState("");
@@ -22,6 +26,44 @@ const CategoryPage = () => {
   const [currentFeatureType, setCurrentFeatureType] = useState("");
 
   const categoryData = categoryFeatures[category as keyof typeof categoryFeatures];
+
+  useEffect(() => {
+    // Check authentication
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+      
+      if (!session) {
+        toast.error("Please login to use the code generator.");
+        navigate("/auth");
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user || !session) {
+    return null;
+  }
 
   if (!categoryData) {
     return (
