@@ -98,12 +98,25 @@ const CategoryPage = () => {
         return;
       }
 
+      // Save to database
+      const { error: saveError } = await supabase.from("code_snippets").insert({
+        user_id: user.id,
+        feature_type: featureType,
+        category: categoryData.name,
+        code: data.code,
+        customization: customDesc || null
+      });
+
+      if (saveError) {
+        console.error("Error saving snippet:", saveError);
+      }
+
       setGeneratedCode(data.code);
       setSelectedFeature(featureType);
-      toast.success("Code generated successfully!");
+      toast.success("Kode genereret og gemt i dit dashboard!");
     } catch (error) {
       console.error('Generation error:', error);
-      toast.error("Failed to generate code. Please try again.");
+      toast.error("Kunne ikke generere kode. Prøv igen.");
     } finally {
       setIsGenerating(false);
     }
