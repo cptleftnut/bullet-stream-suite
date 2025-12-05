@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryCard } from "@/components/CategoryCard";
 import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
+import { Zap, LayoutDashboard, LogOut } from "lucide-react";
 import { categoryFeatures } from "@/data/categoryFeatures";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -52,11 +52,18 @@ const Index = () => {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-accent/10" />
         <div className="container mx-auto px-4 py-16 relative">
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end gap-3 mb-4">
             {user ? (
-              <Button onClick={handleLogout} variant="outline">
-                Logout
-              </Button>
+              <>
+                <Button onClick={() => navigate("/dashboard")} variant="outline">
+                  <LayoutDashboard className="w-4 h-4 mr-2" />
+                  Dashboard
+                </Button>
+                <Button onClick={handleLogout} variant="ghost">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Log ud
+                </Button>
+              </>
             ) : (
               <Button onClick={() => navigate("/auth")}>
                 Login

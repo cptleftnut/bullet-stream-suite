@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      code_snippets: {
+        Row: {
+          category: string
+          code: string
+          created_at: string
+          customization: string | null
+          feature_type: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          code: string
+          created_at?: string
+          customization?: string | null
+          feature_type: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string
+          customization?: string | null
+          feature_type?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
