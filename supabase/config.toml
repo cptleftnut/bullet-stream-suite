@@ -1,1 +1,4 @@
 project_id = "nbvvfexdehzxlagwhhcf"
+
+[functions.generate-roblox-code]
+verify_jwt = false
