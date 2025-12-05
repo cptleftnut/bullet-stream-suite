@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { ArrowLeft } from "lucide-react";
 
 const emailSchema = z.string().email("Invalid email address").max(255);
 const passwordSchema = z.string().min(6, "Password must be at least 6 characters").max(100);
@@ -110,6 +111,10 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
+          <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-2">
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Home
+          </Link>
           <CardTitle className="text-2xl font-bold text-center">
             Roblox AI Code Generator
           </CardTitle>
